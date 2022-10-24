@@ -10,7 +10,7 @@ SELECT e.emp_no
 	,ti.title
 	,ti.from_date
 	,ti.to_date
-INTO retirment_titles
+--INTO retirement_titles
 FROM employees as e
 INNER JOIN titles as ti
 	ON e.emp_no = ti.emp_no
@@ -26,14 +26,14 @@ SELECT DISTINCT ON (emp_no) rt.emp_no
 	,rt.last_name
 	,rt.title
 
-INTO unique_titles
+--INTO unique_titles
 FROM retirement_titles as rt
 WHERE rt.to_date = '9999-01-01'
 ORDER BY rt.emp_no, rt.to_date DESC;
 
 
 SELECT COUNT (emp_no), title
-INTO retiring_titles
+--INTO retiring_titles
 FROM unique_titles
 GROUP BY title
 ORDER BY COUNT (emp_no) DESC
@@ -62,7 +62,7 @@ SELECT DISTINCT ON (emp_no) e.emp_no
 	,de.from_date
 	,de.to_date
 	,ti.title
-INTO mentorship_eligibility
+--INTO mentorship_eligibility
 FROM employees as e
 INNER JOIN dept_emp as de
 	ON e.emp_no = de.emp_no
@@ -78,3 +78,38 @@ ORDER BY e.emp_no
 
 -- Export the Mentorship Eligibility table as mentorship_eligibilty.csv 
 --		and save it to your Data folder in the Pewlett-Hackard-Analysis folder.
+SELECT DISTINCT ON (emp_no) e.emp_no
+	,e.first_name
+	,e.last_name
+	,e.birth_date
+	,de.from_date
+	,de.to_date
+	,ti.title
+--INTO expanded_mentorship_eligibility_1
+FROM employees as e
+INNER JOIN dept_emp as de
+	ON e.emp_no = de.emp_no
+INNER JOIN titles as ti
+	ON e.emp_no = ti.emp_no
+WHERE (e.birth_date BETWEEN '1956-01-01' AND '1965-12-31')
+	AND de.to_date = '9999-01-01'
+ORDER BY e.emp_no
+
+SELECT DISTINCT ON (emp_no) e.emp_no
+	,e.first_name
+	,e.last_name
+	,e.birth_date
+	,de.from_date
+	,de.to_date
+	,ti.title
+--INTO expanded_mentorship_eligibility_2
+FROM employees as e
+INNER JOIN dept_emp as de
+	ON e.emp_no = de.emp_no
+INNER JOIN titles as ti
+	ON e.emp_no = ti.emp_no
+WHERE de.to_date = '9999-01-01' 
+	and (e.birth_date BETWEEN '1960-01-01' AND '1980-12-31')
+	AND (ti.title LIKE 'Senior%'
+		 OR ti.title LIKE '%Leader')
+ORDER BY e.emp_no
